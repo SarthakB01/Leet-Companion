@@ -2,19 +2,19 @@
 
 ## Overview
 
-**LeetCompanion** is a Chrome extension that brings the power of AI directly to your LeetCode problem-solving workflow. With seamless integration, a modern UI, and real-time hints and explanations powered by Groq's Llama 3 model, LeetCompanion is the perfect coding companion for anyone looking to level up their LeetCode practice.
+**LeetCompanion** is a Chrome extension that brings the power of AI directly to your LeetCode problem-solving workflow. With seamless integration, a modern UI, and real-time hints and explanations powered by Groq’s Llama 3 model, LeetCompanion is the perfect coding companion for anyone looking to level up their LeetCode practice.
 
 ---
 
 ## Key Features
 
 - **Instant AI Help:** Get hints, explanations, and debugging assistance for any LeetCode problem, right on the problem page.
-- **Context-Aware Sidebar:** Automatically displays the current problem's title, description, difficulty, and tags.
-- **Groq API Integration:** Uses the Llama 3 70B model via Groq's API for fast, high-quality responses.
+- **Context-Aware Sidebar:** Automatically displays the current problem’s title, description, difficulty, and tags.
+- **Groq API Integration:** Uses the Llama 3 70B model via Groq’s API for fast, high-quality responses.
 - **User API Key:** Securely uses your own Groq API key, set via the extension popup.
-- **Quick Actions:** One-click prompts for common requests like "Give me a hint" or "Explain approach."
+- **Quick Actions:** One-click prompts for common requests like “Give me a hint” or “Explain approach.”
 - **Modern UI:** Built with React and Tailwind CSS for a clean, responsive experience.
-- **Manifest v3 & CSP Compliant:** Fully compatible with Chrome's latest extension standards and security policies.
+- **Manifest v3 & CSP Compliant:** Fully compatible with Chrome’s latest extension standards and security policies.
 
 ---
 
@@ -27,7 +27,7 @@
 
 ### 2. Sidebar (React App)
 - Renders inside an iframe for isolation and security.
-- Loads the current problem's context and displays it at the top.
+- Loads the current problem’s context and displays it at the top.
 - Provides a chat interface for interacting with the AI assistant.
 - Handles quick actions and displays conversation history.
 
@@ -55,7 +55,7 @@
 4. **Go to any LeetCode problem page.**
 5. **Click the 🤖 toggle button** to open the sidebar.
 6. **Ask for hints, explanations, or debugging help**—or use the quick action buttons.
-7. **Get instant, context-aware responses** from the AI, tailored to the problem you're working on.
+7. **Get instant, context-aware responses** from the AI, tailored to the problem you’re working on.
 
 ---
 
@@ -66,7 +66,7 @@
 - **SPA Navigation on LeetCode:**  
   Uses a MutationObserver to detect URL changes and update the sidebar context without requiring a page reload.
 - **API Key Security:**  
-  The API key is stored in Chrome's extension storage and never exposed to the page or network requests outside the extension context.
+  The API key is stored in Chrome’s extension storage and never exposed to the page or network requests outside the extension context.
 - **Build Process:**  
   Vite is configured to output all necessary bundles, and a post-build script injects the correct script tags into the final HTML.
 
@@ -85,4 +85,4 @@
 
 ## Conclusion
 
-**LeetCompanion** transforms your LeetCode workflow by embedding a powerful AI assistant right where you need it. With seamless integration, modern UI, and robust security, it's the perfect coding companion for anyone looking to level up their problem-solving skills. 
+**LeetCompanion** transforms your LeetCode workflow by embedding a powerful AI assistant right where you need it. With seamless integration, modern UI, and robust security, it’s the perfect coding companion for anyone looking to level up their problem-solving skills.
