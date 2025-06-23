@@ -9668,6 +9668,11 @@ function Sidebar() {
   const [problemData, setProblemData] = reactExports.useState(null);
   const [apiKey, setApiKey] = reactExports.useState("");
   const messagesEndRef = reactExports.useRef(null);
+  const [showQuickActions, setShowQuickActions] = reactExports.useState(true);
+  const [problemInfoHeight, setProblemInfoHeight] = reactExports.useState(100);
+  const problemInfoRef = reactExports.useRef(null);
+  const chatAreaRef = reactExports.useRef(null);
+  const isResizing = reactExports.useRef(false);
   reactExports.useEffect(() => {
     if (chrome == null ? void 0 : chrome.storage) {
       chrome.storage.local.get(["openaiApiKey"], (r) => {
@@ -9773,6 +9778,33 @@ I can provide hints, explanations or help debug code. What can I do for you?`
     { Icon: Code, text: "Approach", fill: "What's an efficient approach?" },
     { Icon: HelpCircle, text: "Complexity", fill: "Time & space complexity?" }
   ];
+  const startResize = (e) => {
+    isResizing.current = true;
+    document.body.style.cursor = "row-resize";
+  };
+  const stopResize = () => {
+    isResizing.current = false;
+    document.body.style.cursor = "";
+  };
+  const handleResize = (e) => {
+    if (isResizing.current && problemInfoRef.current) {
+      const sidebarTop = problemInfoRef.current.parentElement.getBoundingClientRect().top;
+      let newHeight = e.clientY - sidebarTop - 24;
+      if (newHeight < 60)
+        newHeight = 60;
+      if (newHeight > 200)
+        newHeight = 200;
+      setProblemInfoHeight(newHeight);
+    }
+  };
+  reactExports.useEffect(() => {
+    window.addEventListener("mousemove", handleResize);
+    window.addEventListener("mouseup", stopResize);
+    return () => {
+      window.removeEventListener("mousemove", handleResize);
+      window.removeEventListener("mouseup", stopResize);
+    };
+  }, []);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: {
     display: "flex",
     flexDirection: "column",
@@ -9798,17 +9830,67 @@ I can provide hints, explanations or help debug code. What can I do for you?`
         fontSize: "0.85rem"
       }, children: (problemData == null ? void 0 : problemData.difficulty) || "Unknown" })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: {
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { ref: problemInfoRef, style: {
       background: "#fafafa",
       margin: "16px 24px 8px 24px",
       padding: "12px",
       borderRadius: 10,
       boxShadow: "0 1px 4px 0 rgba(0,0,0,0.04)",
       fontSize: "0.95rem",
-      maxHeight: 100,
-      overflowY: "auto"
+      height: problemInfoHeight,
+      minHeight: 60,
+      maxHeight: 200,
+      overflowY: "auto",
+      resize: "none"
     }, children: (problemData == null ? void 0 : problemData.description) || "No description available." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: {
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        style: {
+          height: 8,
+          margin: "0 24px",
+          cursor: "row-resize",
+          background: "#eee",
+          borderRadius: 4,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        },
+        onMouseDown: startResize,
+        title: "Resize",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: { width: 32, height: 3, background: "#ccc", borderRadius: 2 } })
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", alignItems: "center", margin: "0 24px 4px 24px" }, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => setShowQuickActions((v) => !v),
+          style: {
+            background: "#fff",
+            border: "1px solid #FFA116",
+            borderRadius: 12,
+            width: 24,
+            height: 24,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            marginRight: 8,
+            transition: "transform 0.2s"
+          },
+          title: showQuickActions ? "Hide quick actions" : "Show quick actions",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: {
+            display: "inline-block",
+            transform: showQuickActions ? "rotate(90deg)" : "rotate(-90deg)",
+            fontSize: 16,
+            color: "#FFA116"
+          }, children: "▶" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: 12, color: "#888" }, children: "Quick Actions" })
+    ] }),
+    showQuickActions && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: {
       display: "flex",
       gap: 8,
       margin: "0 24px 12px 24px"
@@ -9826,7 +9908,7 @@ I can provide hints, explanations or help debug code. What can I do for you?`
       " ",
       action.text
     ] }, i)) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: {
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { ref: chatAreaRef, style: {
       flex: "1 1 0%",
       overflowY: "auto",
       margin: "0 24px",

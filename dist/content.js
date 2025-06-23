@@ -311,17 +311,22 @@ Unable to extract problem description. Please refresh the page or check the Leet
   }
   toggleSidebar() {
     const sidebar = document.getElementById("leetbuddy-sidebar");
+    const toggleButton = document.getElementById("leetbuddy-toggle");
     if (!sidebar)
       return;
     this.sidebarOpen = !this.sidebarOpen;
     if (this.sidebarOpen) {
       sidebar.classList.add("open");
+      if (toggleButton)
+        toggleButton.style.display = "none";
       console.log("Sidebar opened");
       if (!this.currentProblem || Date.now() - this.currentProblem.timestamp > 3e4) {
         this.extractProblemDataWithRetries();
       }
     } else {
       sidebar.classList.remove("open");
+      if (toggleButton)
+        toggleButton.style.display = "block";
       console.log("Sidebar closed");
     }
   }

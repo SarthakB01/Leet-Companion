@@ -341,12 +341,14 @@ class LeetBuddyContent {
 
   toggleSidebar() {
     const sidebar = document.getElementById("leetbuddy-sidebar")
+    const toggleButton = document.getElementById("leetbuddy-toggle")
     if (!sidebar) return
 
     this.sidebarOpen = !this.sidebarOpen
 
     if (this.sidebarOpen) {
       sidebar.classList.add("open")
+      if (toggleButton) toggleButton.style.display = "none"
       console.log("Sidebar opened")
       
       // Re-extract problem data when opening sidebar if data is stale
@@ -355,6 +357,7 @@ class LeetBuddyContent {
       }
     } else {
       sidebar.classList.remove("open")
+      if (toggleButton) toggleButton.style.display = "block"
       console.log("Sidebar closed")
     }
   }

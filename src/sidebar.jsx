@@ -1,6 +1,7 @@
 // sidebar.jsx – Polished LeetBuddy sidebar UI
 "use client"
 
+import React from "react"
 import { useState, useEffect, useRef } from "react"
 import { createRoot } from "react-dom/client"
 import { Send, X, Lightbulb, Code, HelpCircle, RefreshCw } from "lucide-react"
@@ -14,6 +15,11 @@ function Sidebar() {
   const [problemData, setProblemData] = useState(null)
   const [apiKey, setApiKey] = useState("")
   const messagesEndRef = useRef(null)
+  const [showQuickActions, setShowQuickActions] = useState(true)
+  const [problemInfoHeight, setProblemInfoHeight] = useState(100)
+  const problemInfoRef = useRef(null)
+  const chatAreaRef = useRef(null)
+  const isResizing = useRef(false)
 
   useEffect(() => {
     if (chrome?.storage) {
@@ -131,6 +137,33 @@ function Sidebar() {
     if (window.parent !== window) window.parent.postMessage({ type: "CLOSE_SIDEBAR" }, "*")
   }
 
+  // Mouse event handlers for resizing
+  const startResize = (e) => {
+    isResizing.current = true
+    document.body.style.cursor = "row-resize"
+  }
+  const stopResize = () => {
+    isResizing.current = false
+    document.body.style.cursor = ""
+  }
+  const handleResize = (e) => {
+    if (isResizing.current && problemInfoRef.current) {
+      const sidebarTop = problemInfoRef.current.parentElement.getBoundingClientRect().top
+      let newHeight = e.clientY - sidebarTop - 24 // 24px top margin
+      if (newHeight < 60) newHeight = 60
+      if (newHeight > 200) newHeight = 200
+      setProblemInfoHeight(newHeight)
+    }
+  }
+  useEffect(() => {
+    window.addEventListener("mousemove", handleResize)
+    window.addEventListener("mouseup", stopResize)
+    return () => {
+      window.removeEventListener("mousemove", handleResize)
+      window.removeEventListener("mouseup", stopResize)
+    }
+  }, [])
+
   return (
     <div style={{
       display: "flex",
@@ -159,44 +192,94 @@ function Sidebar() {
         }}>{problemData?.difficulty || "Unknown"}</span>
       </div>
 
-      {/* Problem Info */}
-      <div style={{
+      {/* Problem Info (Resizable) */}
+      <div ref={problemInfoRef} style={{
         background: "#fafafa",
         margin: "16px 24px 8px 24px",
         padding: "12px",
         borderRadius: 10,
         boxShadow: "0 1px 4px 0 rgba(0,0,0,0.04)",
         fontSize: "0.95rem",
-        maxHeight: 100,
-        overflowY: "auto"
+        height: problemInfoHeight,
+        minHeight: 60,
+        maxHeight: 200,
+        overflowY: "auto",
+        resize: "none"
       }}>
         {problemData?.description || "No description available."}
       </div>
-
-      {/* Quick Actions */}
-      <div style={{
-        display: "flex",
-        gap: 8,
-        margin: "0 24px 12px 24px"
-      }}>
-        {quickActions.map((action, i) => (
-          <button key={i} style={{
-            border: "1px solid #FFA116",
-            background: "#fff",
-            color: "#FFA116",
-            borderRadius: 16,
-            padding: "4px 12px",
-            fontSize: "0.85rem",
-            fontWeight: 500,
-            cursor: "pointer"
-          }} onClick={() => setInputValue(action.fill)} disabled={isLoading}>
-            <action.Icon className="w-3 h-3" /> {action.text}
-          </button>
-        ))}
+      {/* Resize handle */}
+      <div
+        style={{
+          height: 8,
+          margin: "0 24px",
+          cursor: "row-resize",
+          background: "#eee",
+          borderRadius: 4,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+        onMouseDown={startResize}
+        title="Resize"
+      >
+        <div style={{ width: 32, height: 3, background: "#ccc", borderRadius: 2 }} />
       </div>
 
-      {/* Chat */}
-      <div style={{
+      {/* Quick Actions Toggle */}
+      <div style={{ display: "flex", alignItems: "center", margin: "0 24px 4px 24px" }}>
+        <button
+          onClick={() => setShowQuickActions((v) => !v)}
+          style={{
+            background: "#fff",
+            border: "1px solid #FFA116",
+            borderRadius: 12,
+            width: 24,
+            height: 24,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            marginRight: 8,
+            transition: "transform 0.2s"
+          }}
+          title={showQuickActions ? "Hide quick actions" : "Show quick actions"}
+        >
+          <span style={{
+            display: "inline-block",
+            transform: showQuickActions ? "rotate(90deg)" : "rotate(-90deg)",
+            fontSize: 16,
+            color: "#FFA116"
+          }}>▶</span>
+        </button>
+        <span style={{ fontSize: 12, color: '#888' }}>Quick Actions</span>
+      </div>
+      {/* Quick Actions */}
+      {showQuickActions && (
+        <div style={{
+          display: "flex",
+          gap: 8,
+          margin: "0 24px 12px 24px"
+        }}>
+          {quickActions.map((action, i) => (
+            <button key={i} style={{
+              border: "1px solid #FFA116",
+              background: "#fff",
+              color: "#FFA116",
+              borderRadius: 16,
+              padding: "4px 12px",
+              fontSize: "0.85rem",
+              fontWeight: 500,
+              cursor: "pointer"
+            }} onClick={() => setInputValue(action.fill)} disabled={isLoading}>
+              <action.Icon className="w-3 h-3" /> {action.text}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Chat (Resizable below problem info) */}
+      <div ref={chatAreaRef} style={{
         flex: "1 1 0%",
         overflowY: "auto",
         margin: "0 24px",
