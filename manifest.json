@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "LeetBuddy",
+  "name": "LeetCompanion",
   "version": "1.0.0",
   "description": "AI-powered LeetCode companion that provides hints, explanations, and problem summaries",
   "permissions": [
@@ -28,7 +28,7 @@
   ],
   "action": {
     "default_popup": "dist/popup.html",
-    "default_title": "LeetBuddy",
+    "default_title": "LeetCompanion",
     "default_icon": {
       "16": "icons/icon16.png"
     }
